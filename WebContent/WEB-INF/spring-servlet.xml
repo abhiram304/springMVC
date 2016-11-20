@@ -1,0 +1,127 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/data/jpa
+    	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+  
+    <!-- It register the beans in context and scan the annotations inside beans and activate them -->
+    <context:component-scan base-package="edu.sjsu.cmpe275.lab2.controller" />
+   
+    <!-- This allow for dispatching requests to Controllers -->
+    <mvc:annotation-driven />
+    
+    <jpa:repositories base-package="edu.sjsu.cmpe275.lab2.model"/>
+    <bean id ="appController" class="edu.sjsu.cmpe275.lab2.controller.AppController">
+    	<property name="phoneService" ref="phoneService"></property>
+    	<property name="userService" ref="userService"></property>
+    </bean>
+    <bean id ="phoneService" class="edu.sjsu.cmpe275.lab2.service.PhoneServiceImpl">
+    	<property name="phoneDAO" ref="phoneDAO"></property>
+    </bean>
+    <bean id ="userService" class="edu.sjsu.cmpe275.lab2.service.UserServiceImpl">
+    	<property name="userDAO" ref="userDAO"></property>
+    </bean>
+    <bean id ="phoneDAO" class="edu.sjsu.cmpe275.lab2.dao.PhoneDAOImpl"/>  
+    <bean id ="userDAO" class="edu.sjsu.cmpe275.lab2.dao.UserDAOImpl"/>
+    <!-- 
+    <bean id ="phoneService" class="edu.sjsu.cmpe275.lab2.service.PhoneServiceImpl"/>
+    <bean id ="userService" class="edu.sjsu.cmpe275.lab2.service.UserServiceImpl"/>
+    <bean id ="user" class="edu.sjsu.cmpe275.lab2.model.User"/>
+    <bean id ="phone" class="edu.sjsu.cmpe275.lab2.model.Phone"/>    
+    <bean id ="address" class="edu.sjsu.cmpe275.lab2.model.Address"/>
+    <bean id ="phoneDAO" class="edu.sjsu.cmpe275.lab2.dao.PhoneDAOImpl"/>  
+    <bean id ="userDAO" class="edu.sjsu.cmpe275.lab2.dao.UserDAOImpl"/> -->
+             
+    <!-- This helps in mapping the logical view names to directly view files under a certain pre-configured directory -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+      
+    <!-- This resolves messages from resource bundles for different locales -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="application" />
+    </bean>
+    
+    <bean id="persistenceUnitManager"
+        class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
+        <property name="persistenceXmlLocations">
+            <list>
+            <value>classpath*:META-INF/persistence.xml</value>
+            </list>
+        </property>
+        <property name="defaultDataSource" ref="dataSource" />
+    </bean>
+     
+    <!-- This produces a container-managed EntityManagerFactory; 
+         rather than application-managed EntityManagerFactory as in case of LocalEntityManagerFactoryBean-->
+    <bean id="entityManagerFactoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource" />
+      <!-- This makes /META-INF/persistence.xml is no longer necessary -->
+      <property name="packagesToScan" value="edu.sjsu.cmpe275.lab2.model" />
+      <!-- JpaVendorAdapter implementation for Hibernate EntityManager.
+           Exposes Hibernate's persistence provider and EntityManager extension interface -->
+      <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+      <property name="persistenceUnitManager" ref="persistenceUnitManager" />
+      <property name="persistenceUnitName" value="CMPE275LAB2" />
+      <property name="jpaProperties">
+         <props>
+            <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            <prop key="hibernate.hbm2ddl.auto">create</prop>
+            <prop key="hibernate.show_sql">true</prop> 
+            <prop key="hibernate.format_sql">true</prop> 
+            <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop> 
+         	<prop key="hibernate.enable_lazy_load_no_trans">true</prop>
+         </props>
+      </property>
+      <!-- <property name="mappingResources">
+      <list>
+      <value>edu.sjsu.cmpe275.lab2.model.Phone</value>
+      <value>edu.sjsu.cmpe275.lab2.model.User</value>
+      <value>edu.sjsu.cmpe275.lab2.model.Address</value>
+      </list>
+      </property>
+ -->   </bean>
+  
+   <!-- Simple implementation of the standard JDBC DataSource interface, 
+        configuring the plain old JDBC DriverManager via bean properties -->
+   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+      <property name="url" value="jdbc:mysql://localhost:3306/cmpe275lab2db" />
+      <property name="username" value="root" />
+      <property name="password" value="password" />
+   </bean>
+   
+   <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="true"/>
+        <property name="generateDdl" value="true"/>
+        <property name="database" value="MYSQL"/>
+    </bean>
+     
+    <!-- This transaction manager is appropriate for applications that use a single JPA EntityManagerFactory for transactional data access. 
+        JTA (usually through JtaTransactionManager) is necessary for accessing multiple transactional resources within the same transaction. -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      <property name="entityManagerFactory" ref="entityManagerFactoryBean" />
+   </bean>
+   
+   <!-- Enable JPA Support -->
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+    
+   <!-- responsible for registering the necessary Spring components that power annotation-driven transaction management; 
+        such as when @Transactional methods are invoked -->
+   <tx:annotation-driven />
+    
+</beans>

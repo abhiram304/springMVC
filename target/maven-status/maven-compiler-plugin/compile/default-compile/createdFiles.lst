@@ -1,0 +1,16 @@
+edu\sjsu\cmpe275\lab2\service\UserService.class
+edu\sjsu\cmpe275\lab2\dao\PhoneDAOImpl.class
+edu\sjsu\cmpe275\lab2\service\PhoneService.class
+edu\sjsu\cmpe275\lab2\dao\UserDAO.class
+edu\sjsu\cmpe275\lab2\service\UserServiceImpl.class
+edu\sjsu\cmpe275\lab2\dao\UserDAOImpl.class
+edu\sjsu\cmpe275\lab2\configuration\AppInitializer.class
+edu\sjsu\cmpe275\lab2\configuration\HibernateConfiguration.class
+edu\sjsu\cmpe275\lab2\dao\PhoneDAO.class
+edu\sjsu\cmpe275\lab2\dao\AbstractDao.class
+edu\sjsu\cmpe275\lab2\model\User.class
+edu\sjsu\cmpe275\lab2\controller\AppController.class
+edu\sjsu\cmpe275\lab2\model\Phone.class
+edu\sjsu\cmpe275\lab2\configuration\AppConfig.class
+edu\sjsu\cmpe275\lab2\service\PhoneServiceImpl.class
+edu\sjsu\cmpe275\lab2\model\Address.class
