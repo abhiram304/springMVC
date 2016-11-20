@@ -157,6 +157,11 @@
 					<configuration>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
 						<warName>CMPE275LAB2</warName>
+						<artifactItems>
+						<groupId>com.github.jsimone</groupId>
+						<artifactId>webapp-runner</artifactId>
+						<version>8.0.30.2</version>
+						</artifactItems>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
 					</configuration>
 				</plugin>
